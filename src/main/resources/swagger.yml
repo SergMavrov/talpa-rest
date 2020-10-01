@@ -1,0 +1,84 @@
+openapi: 3.0.1
+info:
+  title: Talpa Dron Service
+  version: '1.0'
+  description: test app
+  contact:
+    email: serg.mavrov@gmail.com
+servers:
+  - url: 'https://localhost:8080/'
+    description: Development
+tags:
+  - name: dron
+    description: best routes calcilation.
+paths:
+  '/talpa/routes':
+    post:
+      tags:
+        - dron
+      summary: Calculate best routes for the provided location
+      description: ''
+      operationId: calculateRoutes
+      requestBody:
+        $ref: '#/components/requestBodies/LocationsBody'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RouteResult'
+        '400':
+          $ref: '#/components/responses/badrequest'
+components:
+  schemas:
+    Types:
+      type: string
+      enum:
+        - CUSTOMER
+        - STORE
+        - DEPOT
+    Location:
+      type: object
+      properties:
+        name:
+          type: string
+        address:
+          type: string
+        latitude:
+          type: number
+        longitude:
+          type: number
+        type:
+          $ref: '#/components/schemas/Types'
+    RouteResult:
+      type: object
+      properties:
+        customer:
+          $ref: '#/components/schemas/Location'
+        store:
+          $ref: '#/components/schemas/Location'
+        depot:
+          $ref: '#/components/schemas/Location'
+        distance:
+          type: number
+        duration:
+          type: string
+  requestBodies:
+    LocationsBody:
+      description: A JSON object containing the locations.
+      required: true
+      content:
+        application/json;charset=UTF-8:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/Location'
+  responses:
+    badrequest:
+      description: Bad Request
+    internalservererror:
+      description: Internal Server Error
+
